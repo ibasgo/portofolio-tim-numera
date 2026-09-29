@@ -1,0 +1,61 @@
+---
+title: "Forecast Permintaan Mingguan untuk 1.200 SKU"
+description: "Pipeline forecasting otomatis yang memangkas stok berlebih 22% tanpa menaikkan kejadian stok habis."
+date: 2025-11-05
+image: thumbnail.svg
+categories: [Forecasting, R, Airflow, Distribusi]
+author:
+  - Sari Wulandari
+  - Bima Saputra
+  - Andi Pratama
+---
+
+::: {.project-meta}
+::: {}
+[Klien]{.label}
+
+[Distributor FMCG (anonim)]{.value}
+:::
+::: {}
+[Durasi]{.label}
+
+[12 minggu]{.value}
+:::
+::: {}
+[Tim]{.label}
+
+[Sari · Bima · Andi]{.value}
+:::
+::: {}
+[Tools]{.label}
+
+[R · fable · Airflow]{.value}
+:::
+:::
+
+::: {.callout-tip}
+## Hasil utama (contoh)
+Stok berlebih turun **22%**, tingkat stok habis tetap di bawah 2%, dan tim perencanaan menghemat
+sekitar **15 jam kerja per minggu**.
+:::
+
+## Masalah
+
+Perencana stok menyusun pesanan mingguan di spreadsheet berdasarkan rata-rata 4 minggu terakhir.
+Hasilnya: gudang penuh barang lambat laku, sementara produk musiman sering kosong menjelang hari raya.
+
+## Pendekatan
+
+- **Segmentasi SKU** berdasarkan pola permintaan (stabil, musiman, intermiten) — tiap segmen
+  memakai metode berbeda, bukan satu model untuk semua.
+- **Baseline dulu**: setiap model harus mengalahkan *seasonal naive* dan rata-rata bergerak
+  pada data uji *rolling origin*. Model yang kalah tidak dipakai.
+- **Variabel kalender lokal**: Ramadan, Idulfitri, dan libur sekolah dimasukkan sebagai regresor.
+- **Otomatisasi**: Airflow menjalankan forecast setiap Senin pukul 05.00 dan mengirim rekomendasi
+  pesanan ke sistem ERP.
+
+## Pelajaran
+
+Untuk 60% SKU yang stabil, metode sederhana sudah cukup. Nilai terbesar justru datang dari
+menangani 15% SKU musiman dengan benar — di situlah uang paling banyak hilang.
+Baca juga tulisan kami: [Kapan perlu forecasting, kapan cukup rata-rata bergerak](../../blog/posts/2026-09-02-forecast-vs-moving-average/index.qmd).

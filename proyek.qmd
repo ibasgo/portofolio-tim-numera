@@ -1,0 +1,17 @@
+---
+title: "Proyek"
+subtitle: "Studi kasus pilihan. Setiap proyek menjelaskan masalah, pendekatan, dan dampaknya — sebagian lengkap dengan kode."
+page-layout: full
+toc: false
+listing:
+  contents: proyek/*/index.qmd
+  type: grid
+  grid-columns: 3
+  sort: "date desc"
+  categories: true
+  sort-ui: [date, title]
+  filter-ui: true
+  fields: [image, date, title, description, categories]
+  image-height: 190px
+  date-format: "MMMM YYYY"
+---

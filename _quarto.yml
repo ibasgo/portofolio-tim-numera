@@ -1,0 +1,58 @@
+project:
+  type: website
+  output-dir: _site
+
+lang: id
+
+# Kode R hanya dijalankan ulang jika file .qmd-nya berubah.
+# Hasilnya disimpan di folder _freeze/ (WAJIB ikut di-commit ke GitHub).
+execute:
+  freeze: auto
+
+website:
+  title: "DataKita"
+  description: "Tim konsultan data analyst: analisis, dashboard, dan forecasting untuk keputusan bisnis."
+  # GANTI dengan URL GitHub Pages Anda (dipakai untuk RSS & sitemap)
+  site-url: "https://USERNAME.github.io/portofolio-tim"
+  favicon: assets/favicon.svg
+  open-graph: true
+  page-navigation: true
+  back-to-top-navigation: true
+  navbar:
+    logo: assets/logo.svg
+    logo-alt: "Logo DataKita"
+    left:
+      - href: index.qmd
+        text: Beranda
+      - href: tim.qmd
+        text: Tim
+      - href: proyek.qmd
+        text: Proyek
+      - href: blog.qmd
+        text: Blog
+    right:
+      - icon: github
+        href: https://github.com/USERNAME
+        aria-label: GitHub
+      - icon: linkedin
+        href: https://www.linkedin.com/
+        aria-label: LinkedIn
+      - icon: envelope
+        href: mailto:halo@datakita.example
+        aria-label: Email
+  page-footer:
+    left: "© 2026 DataKita"
+    right: "Dibuat dengan [Quarto](https://quarto.org)"
+
+format:
+  html:
+    theme:
+      light: [cosmo, assets/light.scss, assets/custom.scss]
+      dark: [darkly, assets/dark.scss, assets/custom.scss]
+    include-in-header: assets/fonts.html
+    toc: true
+    toc-title: "Di halaman ini"
+    code-copy: true
+    code-overflow: wrap
+    smooth-scroll: true
+    link-external-newwindow: true

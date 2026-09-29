@@ -1,0 +1,16 @@
+---
+title: "Tim Kami"
+subtitle: "Empat spesialis dengan peran yang saling melengkapi — dari pipeline data sampai presentasi ke direksi."
+page-layout: full
+toc: false
+listing:
+  contents: tim/*.qmd
+  template: _templates/tim.ejs
+  sort: "order"
+  fields: [title, subtitle, image, description, categories, order]
+---
+
+<!--
+Untuk menambah anggota: salin salah satu file di folder tim/ (mis. tim/andi.qmd),
+ganti isinya, lalu atur urutan tampil dengan field `order`.
+-->

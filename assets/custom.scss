@@ -1,0 +1,144 @@
+/*-- scss:rules --*/
+// Aturan tampilan bersama untuk mode terang & gelap.
+// Variabel ($primary, $surface, $border, ...) diambil dari light.scss / dark.scss.
+
+body { -webkit-font-smoothing: antialiased; }
+h1, h2, h3, .navbar-brand { letter-spacing: -0.02em; }
+
+.navbar { border-bottom: 1px solid $border; }
+.navbar-title { font-weight: 800; }
+.navbar-logo { max-height: 30px; }
+
+// ---------- HERO ----------
+.hero {
+  padding: 2.5rem 0 3rem;
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  .eyebrow {
+    display: inline-block; font-size: .8rem; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; color: $primary;
+    background: rgba($primary, .1); padding: .35rem .75rem; border-radius: 999px;
+  }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800; line-height: 1.08; margin: 1rem 0; border: 0; }
+  h1 .hl { color: $primary; }
+  .lead { color: $muted; font-size: 1.15rem; max-width: 36rem; }
+  .hero-cta { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.75rem; }
+  .hero-visual {
+    background: $surface; border: 1px solid $border; border-radius: 1.25rem; padding: 1.5rem;
+    box-shadow: 0 20px 50px -24px rgba(15, 23, 42, .35);
+  }
+  .hero-visual .kpi-label { display: block; font-size: .8rem; color: $muted; margin: 0; }
+  .hero-visual .kpi-value { font-size: 2rem; font-weight: 800; margin: 0; }
+  .hero-visual .kpi-delta { color: #16A34A; font-weight: 600; font-size: .9rem; }
+  .hero-visual .bars { display: flex; align-items: flex-end; gap: .5rem; height: 140px; margin-top: 1.25rem; }
+  .hero-visual .bars span { flex: 1; border-radius: .4rem .4rem .15rem .15rem; background: rgba($primary, .35); }
+  .hero-visual .bars span:last-child { background: $primary; }
+}
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; padding-top: 2.5rem; gap: 2rem; }
+}
+
+.btn-brand {
+  background: $primary; color: $body-bg !important; border: 1px solid $primary;
+  font-weight: 600; padding: .65rem 1.2rem; border-radius: .6rem; text-decoration: none;
+  &:hover { filter: brightness(1.08); }
+}
+.btn-ghost {
+  background: transparent; color: $body-color !important; border: 1px solid $border;
+  font-weight: 600; padding: .65rem 1.2rem; border-radius: .6rem; text-decoration: none;
+  &:hover { border-color: $primary; color: $primary !important; }
+}
+
+// ---------- STATS ----------
+.stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1rem 0 3.5rem;
+  .stat { border: 1px solid $border; border-radius: .9rem; padding: 1.25rem; background: $surface; }
+    .stat-num, .stat-label { display: block; }
+  .stat-num { font-size: 1.9rem; font-weight: 800; color: $primary; line-height: 1; }
+  .stat-label { color: $muted; font-size: .9rem; margin-top: .4rem; }
+}
+@media (max-width: 860px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+
+// ---------- SECTION HEADERS ----------
+.section-head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap;
+  margin: 3rem 0 1.25rem;
+  h2 { margin: 0; border: 0; font-size: 1.6rem; }
+  a { font-weight: 600; text-decoration: none; }
+}
+.section-sub { color: $muted; margin-top: -.75rem; margin-bottom: 1.5rem; }
+
+// ---------- SERVICE CARDS ----------
+.services {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+  .service { border: 1px solid $border; border-radius: .9rem; padding: 1.5rem; }
+  .service .icon {
+    width: 42px; height: 42px; border-radius: .6rem; display: grid; place-items: center;
+    background: rgba($primary, .12); color: $primary; font-size: 1.25rem; margin-bottom: .9rem;
+  }
+  .service h3 { font-size: 1.1rem; margin: 0 0 .4rem; }
+  .service p { color: $muted; margin: 0; font-size: .95rem; }
+}
+@media (max-width: 860px) { .services { grid-template-columns: 1fr; } }
+
+// ---------- TEAM GRID (template _templates/tim.ejs) ----------
+.team-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem;
+  margin-top: 1rem;
+}
+.team-card {
+  display: flex; flex-direction: column; border: 1px solid $border; border-radius: 1rem;
+  overflow: hidden; text-decoration: none; color: inherit !important; background: $body-bg;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  &:hover { transform: translateY(-3px); border-color: rgba($primary, .6); box-shadow: 0 14px 30px -18px rgba(15, 23, 42, .45); }
+  img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+  .team-body { padding: 1.1rem 1.2rem 1.3rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+  h3 { font-size: 1.1rem; margin: 0; }
+  .team-role { color: $primary; font-weight: 600; font-size: .9rem; margin: 0; }
+  .team-bio { color: $muted; font-size: .9rem; margin: .25rem 0 .5rem; }
+  .team-skills { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: auto; }
+}
+.skill {
+  font-size: .75rem; font-weight: 500; padding: .2rem .55rem; border-radius: 999px;
+  background: $surface; border: 1px solid $border; color: $body-color;
+}
+
+// ---------- LISTING (proyek & blog) ----------
+.quarto-listing .card {
+  border: 1px solid $border; border-radius: 1rem; overflow: hidden;
+  transition: transform .15s ease, box-shadow .15s ease;
+  &:hover { transform: translateY(-3px); box-shadow: 0 14px 30px -18px rgba(15, 23, 42, .45); }
+}
+.quarto-listing .listing-categories .listing-category,
+.quarto-title .quarto-categories .quarto-category {
+  border-radius: 999px; font-size: .72rem; text-transform: none; border-color: $border;
+}
+
+// ---------- CTA ----------
+.cta {
+  margin: 4rem 0 2rem; padding: 2.5rem; border-radius: 1.25rem; text-align: center;
+  background: linear-gradient(135deg, rgba($primary, .14), rgba($accent, .12));
+  border: 1px solid $border;
+  h2 { border: 0; margin-top: 0; }
+  p { color: $muted; max-width: 34rem; margin: 0 auto 1.5rem; }
+}
+
+// ---------- PROJECT META BOX ----------
+.project-meta {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;
+  border: 1px solid $border; background: $surface; border-radius: .9rem; padding: 1.1rem 1.25rem; margin: 0 0 2rem;
+  .label { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: $muted; }
+  .value { font-weight: 600; }
+}
+.callout-synthetic { font-size: .9rem; }
+
+// About page (profil anggota)
+.quarto-about-trestles .about-entity .about-image { border-radius: 1rem; }
+
+// Gambar hasil kode tidak boleh melebihi lebar kolom
+.cell-output-display img, img.figure-img { max-width: 100%; height: auto; }
+
+// Tabel lebar bisa digeser di layar kecil, tidak memotong halaman
+.cell-output-display:has(table) { overflow-x: auto; }

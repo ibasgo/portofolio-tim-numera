@@ -1,0 +1,124 @@
+---
+pagetitle: "DataKita — Tim Konsultan Data Analyst"
+description: "Kami membantu bisnis mengubah data menjadi keputusan: analisis, dashboard, dan forecasting."
+page-layout: full
+toc: false
+listing:
+  - id: proyek-unggulan
+    contents: proyek/*/index.qmd
+    type: grid
+    grid-columns: 3
+    max-items: 3
+    sort: "date desc"
+    fields: [image, title, description, categories]
+    image-height: 190px
+  - id: tulisan-terbaru
+    contents: blog/posts
+    type: default
+    max-items: 2
+    sort: "date desc"
+    fields: [date, title, description, image, reading-time]
+    image-placeholder: assets/logo.svg
+---
+
+::: {.hero}
+
+::: {.hero-text}
+[Konsultan Data Analyst]{.eyebrow}
+
+# Dari data mentah ke [keputusan bisnis]{.hl}.
+
+::: {.lead}
+Kami tim analis, data scientist, dan data engineer yang membantu perusahaan membaca data
+mereka sendiri — lewat analisis yang jujur, dashboard yang dipakai, dan model yang bisa dijelaskan.
+:::
+
+::: {.hero-cta}
+[Lihat Proyek](proyek.qmd){.btn-brand}
+[Kenali Tim](tim.qmd){.btn-ghost}
+:::
+:::
+
+::: {.hero-visual aria-hidden="true"}
+[Pendapatan bulanan (contoh)]{.kpi-label}
+
+[Rp 4,8 M]{.kpi-value} [▲ 12,4% MoM]{.kpi-delta}
+
+```{=html}
+<div class="bars">
+  <span style="height:38%"></span><span style="height:52%"></span><span style="height:45%"></span>
+  <span style="height:63%"></span><span style="height:58%"></span><span style="height:74%"></span>
+  <span style="height:69%"></span><span style="height:88%"></span>
+</div>
+```
+:::
+
+:::
+
+<!-- GANTI angka di bawah dengan data tim Anda yang sebenarnya -->
+::: {.stats}
+::: {.stat}
+[30+]{.stat-num}
+[proyek selesai]{.stat-label}
+:::
+::: {.stat}
+[12]{.stat-num}
+[klien lintas industri]{.stat-label}
+:::
+::: {.stat}
+[4]{.stat-num}
+[spesialis data]{.stat-label}
+:::
+::: {.stat}
+[6 th]{.stat-num}
+[rata-rata pengalaman]{.stat-label}
+:::
+:::
+
+::: {.section-head}
+## Apa yang kami kerjakan
+:::
+
+::: {.services}
+::: {.service}
+[<i class="bi bi-bar-chart-line"></i>]{.icon}
+
+### Analisis & Insight
+Analisis eksploratif, segmentasi, dan uji hipotesis yang menjawab pertanyaan bisnis spesifik.
+:::
+::: {.service}
+[<i class="bi bi-speedometer2"></i>]{.icon}
+
+### Dashboard & BI
+Dashboard Power BI, Looker Studio, atau Shiny dengan definisi metrik yang disepakati.
+:::
+::: {.service}
+[<i class="bi bi-graph-up-arrow"></i>]{.icon}
+
+### Forecasting & Model
+Prediksi permintaan, churn, dan risiko — dengan evaluasi yang transparan, bukan kotak hitam.
+:::
+:::
+
+::: {.section-head}
+## Proyek unggulan
+[Semua proyek →](proyek.qmd)
+:::
+
+::: {#proyek-unggulan}
+:::
+
+::: {.section-head}
+## Tulisan terbaru
+[Semua tulisan →](blog.qmd)
+:::
+
+::: {#tulisan-terbaru}
+:::
+
+::: {.cta}
+## Punya data tapi belum punya jawaban?
+Ceritakan masalah bisnis Anda. Kami bantu merumuskan pertanyaan yang tepat sebelum menyentuh satu baris kode pun.
+
+[Hubungi Kami](mailto:halo@datakita.example){.btn-brand}
+:::

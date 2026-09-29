@@ -1,0 +1,16 @@
+---
+title: "Blog & Insight"
+subtitle: "Catatan praktis dari lapangan: metode, kesalahan umum, dan cara berpikir tentang data."
+listing:
+  contents: blog/posts
+  type: default
+  sort: "date desc"
+  categories: true
+  sort-ui: false
+  filter-ui: true
+  feed: true
+  fields: [image, date, title, description, author, reading-time]
+  date-format: "D MMMM YYYY"
+page-layout: full
+toc: false
+---

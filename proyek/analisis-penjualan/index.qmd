@@ -1,0 +1,244 @@
+---
+title: "Diskon Besar, Margin Hilang: Analisis Penjualan Ritel"
+description: "Pendapatan naik, laba turun. Kami melacak kebocorannya ke transaksi berdiskon di atas 20% — lengkap dengan kode R yang bisa direproduksi."
+date: 2026-07-15
+image: thumbnail.svg
+categories: [R, Analisis Eksploratif, Ritel]
+author:
+  - Andi Pratama
+  - Nadia Putri
+engine: knitr
+---
+
+::: {.project-meta}
+::: {}
+[Klien]{.label}
+
+[Jaringan ritel (anonim)]{.value}
+:::
+::: {}
+[Durasi]{.label}
+
+[5 minggu]{.value}
+:::
+::: {}
+[Tim]{.label}
+
+[Andi · Nadia]{.value}
+:::
+::: {}
+[Tools]{.label}
+
+[R · dplyr · ggplot2]{.value}
+:::
+:::
+
+::: {.callout-note .callout-synthetic}
+## Data sintetis
+Data klien bersifat rahasia. Semua angka di halaman ini **dibangkitkan secara acak** dengan
+pola yang meniru temuan asli, sehingga kodenya bisa Anda jalankan sendiri.
+:::
+
+## Masalah
+
+Pendapatan klien terus naik, tetapi laba kotor tidak ikut naik — bahkan turun. Manajemen menduga
+kenaikan biaya logistik. Pertanyaan kami: **dari mana sebenarnya margin itu bocor?**
+
+## Data
+
+```{r}
+#| label: setup
+#| message: false
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+# Grafik berlatar transparan & teks abu netral agar terbaca di mode terang maupun gelap
+knitr::opts_chunk$set(dev = "png", dev.args = list(bg = "transparent"), dpi = 150)
+BRAND <- "#0D9488"; MUTED <- "#94A3B8"; INK <- "#64748B"; NEG <- "#DC2626"
+theme_set(
+  theme_minimal(base_size = 13) +
+    theme(
+      text = element_text(colour = INK), axis.text = element_text(colour = INK),
+      panel.grid.major = element_line(colour = alpha(INK, .18), linewidth = .4),
+      panel.grid.minor = element_blank(),
+      plot.background = element_rect(fill = "transparent", colour = NA),
+      panel.background = element_rect(fill = "transparent", colour = NA),
+      legend.position = "top", legend.justification = "left",
+      legend.background = element_rect(fill = "transparent", colour = NA)
+    )
+)
+
+# Format angka gaya Indonesia
+pct <- function(x, d = 0) percent(x, accuracy = 10^-d, decimal.mark = ",", big.mark = ".")
+ribuan <- function(x) number(x, big.mark = ".", decimal.mark = ",")
+rupiah <- function(x) paste0(ifelse(x < 0, "-", ""), "Rp", ribuan(abs(x)))
+BULAN <- c("Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des")
+bulan_id <- function(d) ifelse(is.na(d), NA, paste(BULAN[as.integer(format(d, "%m"))], format(d, "%Y")))
+
+# ---------- Data sintetis ----------
+set.seed(42)
+n <- 30000
+ref <- tibble(  # harga rata-rata, margin kotor sebelum diskon, peluang diberi diskon
+  kategori = c("Elektronik", "Fashion", "Kecantikan", "Rumah Tangga", "Makanan", "Olahraga"),
+  harga    = c(2400000, 320000, 180000, 410000, 95000, 650000),
+  margin   = c(.16, .28, .30, .30, .22, .32),
+  peluang  = c(.70, .75, .70, .30, .20, .30),
+  bobot    = c(.12, .24, .16, .18, .20, .10)
+)
+
+hari    <- 0:545
+tanggal <- as.Date("2025-01-01") + sample(hari, n, replace = TRUE, prob = 1 + hari / 546 * .6)
+idx     <- sample(seq_len(nrow(ref)), n, replace = TRUE, prob = ref$bobot)
+waktu   <- as.numeric(tanggal - min(tanggal)) / 545          # 0 → 1
+
+# promosi makin agresif: peluang dan besar diskon naik seiring waktu
+dapat <- runif(n) < ref$peluang[idx] * (.55 + .45 * waktu)
+besar <- sample(c(.05, .10, .15, .20, .25, .30, .40), n, replace = TRUE,
+                prob = c(.18, .20, .17, .15, .12, .10, .08))
+besar <- ifelse(runif(n) < waktu * .22,
+                pmax(besar, sample(c(.25, .30, .40), n, replace = TRUE)), besar)
+diskon      <- ifelse(dapat, besar, 0)
+harga       <- ref$harga[idx] * rlnorm(n, 0, .35)
+qty         <- sample(1:3, n, replace = TRUE)
+biaya_promo <- ifelse(diskon > .20, .04, 0)                  # ongkir gratis, materi promosi, dll.
+
+df <- tibble(
+  tanggal, kategori = ref$kategori[idx],
+  wilayah = sample(c("Jawa", "Sumatra", "Kalimantan", "Sulawesi"), n, replace = TRUE,
+                   prob = c(.55, .20, .13, .12)),
+  qty, diskon,
+  pendapatan = harga * qty * (1 - diskon),
+  laba       = harga * qty * (ref$margin[idx] - diskon - biaya_promo)
+)
+
+# angka ringkas yang dikutip di teks
+h1_25 <- filter(df, tanggal <  as.Date("2025-07-01"))
+h1_26 <- filter(df, tanggal >= as.Date("2026-01-01"))
+tumbuh_pend <- sum(h1_26$pendapatan) / sum(h1_25$pendapatan) - 1
+tumbuh_laba <- sum(h1_26$laba) / sum(h1_25$laba) - 1
+porsi_besar <- function(d) sum(d$pendapatan[d$diskon > .20]) / sum(d$pendapatan)
+
+df |>
+  head(5) |>
+  mutate(tanggal = format(tanggal, "%d-%m-%Y"), diskon = pct(diskon),
+         pendapatan = rupiah(pendapatan), laba = rupiah(laba)) |>
+  knitr::kable(align = "llllrrr")
+```
+
+Data berisi **`r ribuan(nrow(df))` transaksi** dari Januari 2025 hingga Juni 2026,
+mencakup empat wilayah dan enam kategori produk.
+
+## Temuan 1 — Pendapatan naik, laba tidak ikut
+
+Membandingkan semester I 2026 dengan semester I 2025: pendapatan tumbuh
+**`r pct(tumbuh_pend)`**, sementara laba kotor justru
+**`r if (tumbuh_laba < 0) paste("turun", pct(-tumbuh_laba)) else paste("hanya naik", pct(tumbuh_laba))`**.
+
+```{r}
+#| label: fig-tren
+#| fig-cap: "Pendapatan dan laba kotor bulanan (miliar Rp). Jarak antara kedua garis melebar sejak pertengahan 2025."
+#| fig-width: 7.5
+#| fig-height: 3.8
+bulanan <- df |>
+  mutate(bulan = as.Date(format(tanggal, "%Y-%m-01"))) |>
+  group_by(bulan) |>
+  summarise(Pendapatan = sum(pendapatan) / 1e9, `Laba kotor` = sum(laba) / 1e9) |>
+  tidyr::pivot_longer(-bulan, names_to = "seri", values_to = "nilai") |>
+  mutate(seri = factor(seri, levels = c("Pendapatan", "Laba kotor")))
+
+label_akhir <- bulanan |> filter(bulan == max(bulan))
+
+ggplot(bulanan, aes(bulan, nilai, colour = seri)) +
+  geom_line(linewidth = .9) +
+  geom_text(data = label_akhir, aes(label = seri), hjust = 1, vjust = -.9,
+            colour = INK, size = 3.5, show.legend = FALSE) +
+  scale_colour_manual(values = c(Pendapatan = BRAND, `Laba kotor` = MUTED), name = NULL) +
+  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, .12)),
+                     labels = label_number(decimal.mark = ",")) +
+  scale_x_date(labels = bulan_id, date_breaks = "3 months") +
+  labs(x = NULL, y = "Miliar Rp")
+```
+
+## Temuan 2 — Kebocoran terjadi di diskon besar
+
+Porsi pendapatan dari transaksi berdiskon **di atas 20%** naik dari
+**`r pct(porsi_besar(h1_25))`** (semester I 2025) menjadi
+**`r pct(porsi_besar(h1_26))`** (semester I 2026). Masalahnya, di tingkat diskon itu
+rata-rata transaksi sudah merugi.
+
+```{r}
+#| label: fig-diskon
+#| fig-cap: "Margin laba kotor per tingkat diskon, seluruh periode. Di atas 20%, margin menjadi negatif."
+#| fig-width: 7.5
+#| fig-height: 3.8
+per_diskon <- df |>
+  mutate(grup = cut(diskon, c(-.01, 0, .10, .20, .30, .5),
+                    labels = c("0%", "1–10%", "11–20%", "21–30%", ">30%"))) |>
+  group_by(grup) |>
+  summarise(margin = sum(laba) / sum(pendapatan)) |>
+  mutate(tanda = ifelse(margin >= 0, "untung", "rugi"))
+
+ggplot(per_diskon, aes(grup, margin, fill = tanda)) +
+  geom_col(width = .55) +
+  geom_hline(yintercept = 0, colour = INK, linewidth = .4) +
+  geom_text(aes(label = pct(margin), vjust = ifelse(margin >= 0, -.5, 1.5)),
+            colour = INK, size = 3.5) +
+  scale_fill_manual(values = c(untung = BRAND, rugi = NEG), guide = "none") +
+  scale_y_continuous(labels = \(x) pct(x), expand = expansion(mult = .15)) +
+  labs(x = "Tingkat diskon", y = "Margin laba kotor") +
+  theme(panel.grid.major.x = element_blank())
+```
+
+Kerugian itu tidak tersebar merata. Tabel berikut menunjukkan kategori mana yang paling banyak
+kehilangan laba dari transaksi berdiskon besar.
+
+```{r}
+#| label: tbl-kategori
+#| tbl-cap: "Laba kotor dari transaksi berdiskon di atas 20%, per kategori (seluruh periode)."
+tabel <- df |>
+  group_by(kategori) |>
+  summarise(
+    porsi      = sum(pendapatan[diskon > .20]) / sum(pendapatan),
+    margin     = sum(laba) / sum(pendapatan),
+    laba_besar = sum(laba[diskon > .20]) / 1e9,
+    pendapatan = sum(pendapatan)   # diringkas terakhir agar kolom asli tidak tertimpa
+  ) |>
+  arrange(laba_besar)
+
+tabel |>
+  transmute(
+    Kategori = kategori,
+    `Pendapatan total (M Rp)` = number(pendapatan / 1e9, accuracy = .1, decimal.mark = ","),
+    `Porsi diskon >20%` = pct(porsi),
+    `Margin total` = pct(margin, 1),
+    `Laba dari diskon >20% (M Rp)` = number(laba_besar, accuracy = .01, decimal.mark = ",",
+                                            style_positive = "plus")
+  ) |>
+  knitr::kable(align = "lrrrr")
+```
+
+```{r}
+#| echo: false
+terburuk   <- tabel$kategori[1]
+porsi_rugi <- tabel$laba_besar[1] / sum(tabel$laba_besar[tabel$laba_besar < 0])
+margin_terburuk <- ref$margin[ref$kategori == terburuk]
+```
+
+**`r terburuk`** menyumbang **`r pct(porsi_rugi)`** dari seluruh kerugian di transaksi
+berdiskon besar. Penyebabnya sederhana: margin kotor kategori ini sebelum diskon hanya sekitar
+`r pct(margin_terburuk)`, sehingga diskon 20% ke atas hampir pasti membuat transaksi merugi.
+
+## Rekomendasi
+
+1. **Batas diskon per kategori, bukan satu angka untuk semua.** Diskon maksimum sebaiknya di bawah
+   margin kotor kategori tersebut — untuk Elektronik, jauh di bawah 20%.
+2. **Ganti diskon besar dengan bundling atau poin loyalitas** yang biayanya lebih terkendali.
+3. **Pasang *guardrail* di sistem kasir**: diskon di atas batas butuh persetujuan manajer area.
+4. **Pantau margin per tingkat diskon** di dashboard mingguan, bukan hanya total pendapatan.
+
+## Dampak
+
+Setelah kebijakan batas diskon diuji di satu wilayah selama 8 minggu, margin laba kotor naik
+**4,1 poin persentase** dengan penurunan volume penjualan yang tidak signifikan secara statistik.
+*(Angka dampak ini adalah contoh — ganti dengan hasil proyek Anda.)*

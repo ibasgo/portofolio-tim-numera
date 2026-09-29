@@ -1,0 +1,8 @@
+# Pengaturan bersama untuk semua halaman di folder proyek/
+title-block-banner: false
+toc: true
+date-format: "MMMM YYYY"
+format:
+  html:
+    code-fold: true
+    code-summary: "Tampilkan kode"

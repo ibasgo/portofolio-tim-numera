@@ -1,0 +1,4 @@
+# Pengaturan bersama untuk semua tulisan blog
+toc: true
+date-format: "D MMMM YYYY"
+title-block-banner: false

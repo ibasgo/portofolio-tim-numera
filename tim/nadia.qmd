@@ -1,0 +1,57 @@
+---
+title: "Nadia Putri"
+subtitle: "BI & Visualization Specialist"
+description: "Mendesain dashboard yang benar-benar dipakai: sedikit grafik, definisi metrik jelas, cerita yang tajam."
+image: nadia.svg   # ganti dengan foto asli, mis. nadia.jpg (rasio 1:1)
+order: 4
+categories: ["Power BI", "Looker Studio", "Data Storytelling", "UX"]
+toc: false
+listing:
+  id: proyek-anggota
+  contents: ../proyek/*/index.qmd
+  type: table
+  fields: [date, title, categories]
+  field-display-names:
+    date: Tanggal
+    title: Proyek
+    categories: Kategori
+  sort: "date desc"
+  sort-ui: false
+  filter-ui: false
+  include:
+    author: "*Nadia Putri*"
+about:
+  template: trestles
+  image-shape: rounded
+  image-width: 14em
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/
+    - icon: github
+      text: GitHub
+      href: https://github.com/
+    - icon: envelope
+      text: Email
+      href: mailto:nadia@datakita.example
+---
+
+Nadia menggabungkan desain informasi dan pemahaman bisnis. Ia memulai setiap dashboard dengan wawancara pengguna, bukan dengan memilih jenis grafik.
+
+## Keahlian
+
+[Power BI]{.skill}  [Looker Studio]{.skill}  [Data Storytelling]{.skill}  [UX]{.skill}
+
+## Pengalaman
+
+- **BI Specialist** · DataKita · _2023 – sekarang_
+- **BI Developer** · Perusahaan FMCG (contoh) · _2019 – 2023_
+
+## Pendidikan
+
+S1 Sistem Informasi
+
+## Proyek yang melibatkan Nadia
+
+:::{#proyek-anggota}
+:::

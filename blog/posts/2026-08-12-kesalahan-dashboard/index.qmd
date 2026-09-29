@@ -1,0 +1,40 @@
+---
+title: "5 Kesalahan Umum saat Membuat Dashboard (dan Cara Menghindarinya)"
+description: "Dashboard jarang gagal karena teknologinya. Ia gagal karena tidak menjawab pertanyaan siapa pun."
+date: 2026-08-12
+author: Nadia Putri
+image: cover.svg
+categories: [Dashboard, Data Storytelling]
+---
+
+Kebanyakan dashboard yang kami audit tidak gagal karena salah memilih tools. Mereka gagal karena
+dibuat sebelum ada yang bertanya: *keputusan apa yang akan diambil dari layar ini?*
+
+## 1. Mulai dari data, bukan dari keputusan
+
+Gejalanya: 15 grafik untuk semua kolom yang tersedia. Mulailah dengan menulis 3–5 pertanyaan yang
+akan dijawab pengguna setiap minggu, lalu buang grafik yang tidak menjawab satu pun.
+
+## 2. Metrik tanpa definisi
+
+"Pelanggan aktif" menurut tim marketing dan tim finance sering berbeda. Tulis definisi setiap
+metrik — rumus, filter, dan sumber — di halaman yang sama dengan grafiknya.
+
+## 3. Tidak ada pembanding
+
+Angka "Rp 4,8 miliar" tidak berarti apa-apa tanpa konteks. Selalu sertakan pembanding: target,
+periode sebelumnya, atau rata-rata segmen.
+
+## 4. Dua sumbu Y dalam satu grafik
+
+Grafik dengan dua skala berbeda hampir selalu menyesatkan, karena kemiringan garis bisa diatur
+sesuka hati. Pisahkan menjadi dua grafik yang disejajarkan, atau indeks keduanya ke basis yang sama.
+
+## 5. Tidak pernah dicek apakah dipakai
+
+Pasang pelacakan penggunaan. Dashboard yang tidak dibuka selama sebulan adalah kandidat untuk
+dirombak — atau dihapus.
+
+---
+
+**Intinya:** dashboard yang baik lebih mirip jawaban daripada gudang data.

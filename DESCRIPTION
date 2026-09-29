@@ -1,0 +1,13 @@
+Package: portofoliotim
+Title: Dependensi R untuk situs portofolio tim (Quarto)
+Version: 0.1.0
+Description: Daftar paket R yang dibutuhkan untuk merender situs. Dipakai oleh
+    GitHub Actions (r-lib/actions/setup-r-dependencies) dan bisa dipasang lokal
+    dengan remotes::install_deps() atau pak::local_install_deps().
+Imports:
+    knitr,
+    rmarkdown,
+    dplyr,
+    tidyr,
+    ggplot2,
+    scales

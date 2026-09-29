@@ -1,0 +1,41 @@
+---
+title: "Kapan Perlu Forecasting, Kapan Cukup Rata-rata Bergerak?"
+description: "Model canggih tidak selalu menang. Cara sederhana untuk memutuskan apakah investasi forecasting sepadan."
+date: 2026-09-02
+author: Sari Wulandari
+image: cover.svg
+categories: [Forecasting, Metodologi]
+---
+
+Pertanyaan yang paling sering kami terima dari klien distribusi: *"Apakah kami butuh machine
+learning untuk forecast?"* Jawaban jujurnya: **belum tentu.**
+
+## Mulai dari baseline
+
+Sebelum membangun model apa pun, hitung akurasi dua metode paling sederhana:
+
+- **Naive musiman** — permintaan minggu ini = permintaan minggu yang sama tahun lalu.
+- **Rata-rata bergerak** — rata-rata 4–8 minggu terakhir.
+
+Jika model Anda tidak mengalahkan keduanya secara konsisten pada data uji, model itu tidak layak dipakai.
+
+## Tiga tanda Anda butuh lebih dari rata-rata bergerak
+
+1. **Pola musiman kuat** — misalnya lonjakan menjelang Idulfitri yang tanggalnya bergeser setiap tahun.
+2. **Dipengaruhi faktor luar** yang bisa diketahui sebelumnya: promosi, harga, hari libur.
+3. **Biaya salah prediksi tinggi** — produk mudah rusak, atau stok habis berarti kehilangan pelanggan.
+
+## Tanda Anda belum membutuhkannya
+
+- Permintaan stabil dan volumenya kecil.
+- Data historis kurang dari satu siklus musiman penuh.
+- Belum ada proses yang akan *memakai* forecast untuk mengambil keputusan.
+
+## Ukur dengan metrik yang tepat
+
+Gunakan metrik yang sesuai dengan biaya bisnis. MAPE terlihat intuitif tetapi meledak untuk SKU
+dengan penjualan mendekati nol; untuk kasus itu, pertimbangkan MASE atau *weighted* MAPE.
+
+---
+
+Kami menerapkan pendekatan ini di proyek [Forecast Permintaan 1.200 SKU](../../../proyek/forecast-permintaan/index.qmd).

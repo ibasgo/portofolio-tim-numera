@@ -1,0 +1,58 @@
+---
+title: "Andi Pratama"
+subtitle: "Lead Data Analyst"
+description: "Menerjemahkan pertanyaan bisnis menjadi analisis yang terukur dan rekomendasi yang bisa dieksekusi."
+image: andi.svg   # ganti dengan foto asli, mis. andi.jpg (rasio 1:1)
+order: 1
+categories: ["SQL", "R", "A/B Testing", "Stakeholder Mgmt"]
+toc: false
+listing:
+  id: proyek-anggota
+  contents: ../proyek/*/index.qmd
+  type: table
+  fields: [date, title, categories]
+  field-display-names:
+    date: Tanggal
+    title: Proyek
+    categories: Kategori
+  sort: "date desc"
+  sort-ui: false
+  filter-ui: false
+  include:
+    author: "*Andi Pratama*"
+about:
+  template: trestles
+  image-shape: rounded
+  image-width: 14em
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/
+    - icon: github
+      text: GitHub
+      href: https://github.com/
+    - icon: envelope
+      text: Email
+      href: mailto:andi@datakita.example
+---
+
+Andi memimpin tim dalam merumuskan masalah dan memastikan setiap analisis berakhir pada keputusan. Berpengalaman di sektor ritel dan fintech, ia terbiasa menjembatani tim teknis dengan manajemen.
+
+## Keahlian
+
+[SQL]{.skill}  [R]{.skill}  [A/B Testing]{.skill}  [Stakeholder Mgmt]{.skill}
+
+## Pengalaman
+
+- **Lead Data Analyst** · DataKita · _2023 – sekarang_
+- **Senior Data Analyst** · Perusahaan Ritel (contoh) · _2019 – 2023_
+- **Business Analyst** · Startup Fintech (contoh) · _2017 – 2019_
+
+## Pendidikan
+
+S1 Statistika
+
+## Proyek yang melibatkan Andi
+
+:::{#proyek-anggota}
+:::

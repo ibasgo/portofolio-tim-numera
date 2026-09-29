@@ -1,0 +1,57 @@
+---
+title: "Sari Wulandari"
+subtitle: "Data Scientist"
+description: "Membangun model prediksi churn dan permintaan yang akurat sekaligus bisa dijelaskan ke tim bisnis."
+image: sari.svg   # ganti dengan foto asli, mis. sari.jpg (rasio 1:1)
+order: 2
+categories: ["Machine Learning", "Forecasting", "tidymodels", "fable"]
+toc: false
+listing:
+  id: proyek-anggota
+  contents: ../proyek/*/index.qmd
+  type: table
+  fields: [date, title, categories]
+  field-display-names:
+    date: Tanggal
+    title: Proyek
+    categories: Kategori
+  sort: "date desc"
+  sort-ui: false
+  filter-ui: false
+  include:
+    author: "*Sari Wulandari*"
+about:
+  template: trestles
+  image-shape: rounded
+  image-width: 14em
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/
+    - icon: github
+      text: GitHub
+      href: https://github.com/
+    - icon: envelope
+      text: Email
+      href: mailto:sari@datakita.example
+---
+
+Sari fokus pada pemodelan prediktif dan eksperimen. Ia percaya model yang baik adalah model yang dipahami penggunanya, sehingga setiap proyek disertai evaluasi dan penjelasan fitur yang transparan.
+
+## Keahlian
+
+[Machine Learning]{.skill}  [Forecasting]{.skill}  [tidymodels]{.skill}  [fable]{.skill}
+
+## Pengalaman
+
+- **Data Scientist** · DataKita · _2023 – sekarang_
+- **Data Scientist** · Perusahaan Telekomunikasi (contoh) · _2020 – 2023_
+
+## Pendidikan
+
+S2 Ilmu Komputer
+
+## Proyek yang melibatkan Sari
+
+:::{#proyek-anggota}
+:::

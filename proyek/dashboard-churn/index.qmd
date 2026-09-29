@@ -1,0 +1,64 @@
+---
+title: "Dashboard Early-Warning Churn Pelanggan"
+description: "Dashboard Power BI yang menandai pelanggan berisiko berhenti 30 hari lebih awal, dipakai tim retensi setiap pagi."
+date: 2026-04-20
+image: thumbnail.svg
+categories: [Power BI, Machine Learning, Telekomunikasi]
+author:
+  - Sari Wulandari
+  - Nadia Putri
+  - Bima Saputra
+---
+
+::: {.project-meta}
+::: {}
+[Klien]{.label}
+
+[Penyedia internet (anonim)]{.value}
+:::
+::: {}
+[Durasi]{.label}
+
+[10 minggu]{.value}
+:::
+::: {}
+[Tim]{.label}
+
+[Sari · Nadia · Bima]{.value}
+:::
+::: {}
+[Tools]{.label}
+
+[Power BI · BigQuery · tidymodels]{.value}
+:::
+:::
+
+::: {.callout-tip}
+## Hasil utama (contoh)
+Churn bulanan turun **dari 3,2% menjadi 2,6%** dalam dua kuartal setelah dashboard dipakai tim retensi.
+:::
+
+## Masalah
+
+Tim retensi baru tahu pelanggan berhenti setelah kontrak dibatalkan. Tidak ada daftar prioritas
+harian, sehingga kampanye retensi dikirim ke semua pelanggan dan biayanya membengkak.
+
+## Pendekatan
+
+1. **Fondasi data** — Bima menyatukan data tagihan, tiket keluhan, dan penggunaan harian ke BigQuery
+   dengan model dbt yang teruji.
+2. **Model risiko** — Sari melatih model *gradient boosting* dengan fitur perilaku 90 hari terakhir.
+   Kami memilih model yang sedikit kurang akurat tetapi bisa dijelaskan per pelanggan.
+3. **Dashboard** — Nadia mewawancarai 6 agen retensi, lalu merancang satu halaman utama:
+   daftar 200 pelanggan berisiko tertinggi beserta *alasan* utamanya.
+
+## Keputusan desain yang penting
+
+- **Satu angka utama**, bukan 12 grafik: jumlah pelanggan berisiko tinggi hari ini.
+- **Alasan dalam bahasa manusia** ("keluhan jaringan 3× dalam 2 minggu") alih-alih skor SHAP.
+- **Kelompok kontrol**: 10% pelanggan berisiko sengaja tidak dihubungi, agar dampak bisa diukur jujur.
+
+## Pelajaran
+
+Akurasi model hanya separuh cerita. Dampak baru terlihat setelah alur kerja agen retensi
+ikut diubah — dashboard yang tidak masuk rutinitas harian tidak akan dipakai.

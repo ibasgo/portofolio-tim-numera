@@ -1,0 +1,21 @@
+/*-- scss:defaults --*/
+// Warna brand (mode gelap)
+$primary:   #2DD4BF;
+$secondary: #94A3B8;
+$accent:    #FBBF24;
+$body-bg:   #0B1220;
+$body-color:#E2E8F0;
+$surface:   #111A2E;
+$border:    #1F2A44;
+$muted:     #94A3B8;
+
+$navbar-bg: #0B1220;
+$navbar-fg: #CBD5E1;
+$navbar-hl: $primary;
+$footer-bg: #0B1220;
+$link-color: $primary;
+
+$font-family-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+$font-family-monospace:  "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+$headings-font-weight: 700;
+$border-radius: .6rem;

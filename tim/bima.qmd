@@ -1,0 +1,57 @@
+---
+title: "Bima Saputra"
+subtitle: "Data Engineer"
+description: "Merancang pipeline dan data warehouse agar data selalu bersih, tepat waktu, dan terdokumentasi."
+image: bima.svg   # ganti dengan foto asli, mis. bima.jpg (rasio 1:1)
+order: 3
+categories: ["dbt", "Airflow", "BigQuery", "Docker"]
+toc: false
+listing:
+  id: proyek-anggota
+  contents: ../proyek/*/index.qmd
+  type: table
+  fields: [date, title, categories]
+  field-display-names:
+    date: Tanggal
+    title: Proyek
+    categories: Kategori
+  sort: "date desc"
+  sort-ui: false
+  filter-ui: false
+  include:
+    author: "*Bima Saputra*"
+about:
+  template: trestles
+  image-shape: rounded
+  image-width: 14em
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/
+    - icon: github
+      text: GitHub
+      href: https://github.com/
+    - icon: envelope
+      text: Email
+      href: mailto:bima@datakita.example
+---
+
+Bima memastikan fondasi data kokoh: dari ingest, transformasi, hingga pengujian kualitas data. Ia merapikan sumber data yang berserakan menjadi satu sumber kebenaran.
+
+## Keahlian
+
+[dbt]{.skill}  [Airflow]{.skill}  [BigQuery]{.skill}  [Docker]{.skill}
+
+## Pengalaman
+
+- **Data Engineer** · DataKita · _2024 – sekarang_
+- **Data Engineer** · Perusahaan Logistik (contoh) · _2020 – 2024_
+
+## Pendidikan
+
+S1 Teknik Informatika
+
+## Proyek yang melibatkan Bima
+
+:::{#proyek-anggota}
+:::
