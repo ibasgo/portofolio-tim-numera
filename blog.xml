@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>DataKita</title>
+<link>https://USERNAME.github.io/portofolio-tim/blog.html</link>
+<atom:link href="https://USERNAME.github.io/portofolio-tim/blog.xml" rel="self" type="application/rss+xml"/>
+<description>Tim konsultan data analyst: analisis, dashboard, dan forecasting untuk keputusan bisnis.</description>
+<generator>quarto-1.10.18</generator>
+<lastBuildDate>Tue, 01 Sep 2026 17:00:00 GMT</lastBuildDate>
+<item>
+  <title>Kapan Perlu Forecasting, Kapan Cukup Rata-rata Bergerak?</title>
+  <dc:creator>Sari Wulandari</dc:creator>
+  <link>https://USERNAME.github.io/portofolio-tim/blog/posts/2026-09-02-forecast-vs-moving-average/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Pertanyaan yang paling sering kami terima dari klien distribusi: <em>“Apakah kami butuh machine learning untuk forecast?”</em> Jawaban jujurnya: <strong>belum tentu.</strong></p>
+<section id="mulai-dari-baseline" class="level2">
+<h2 class="anchored" data-anchor-id="mulai-dari-baseline">Mulai dari baseline</h2>
+<p>Sebelum membangun model apa pun, hitung akurasi dua metode paling sederhana:</p>
+<ul>
+<li><strong>Naive musiman</strong> — permintaan minggu ini = permintaan minggu yang sama tahun lalu.</li>
+<li><strong>Rata-rata bergerak</strong> — rata-rata 4–8 minggu terakhir.</li>
+</ul>
+<p>Jika model Anda tidak mengalahkan keduanya secara konsisten pada data uji, model itu tidak layak dipakai.</p>
+</section>
+<section id="tiga-tanda-anda-butuh-lebih-dari-rata-rata-bergerak" class="level2">
+<h2 class="anchored" data-anchor-id="tiga-tanda-anda-butuh-lebih-dari-rata-rata-bergerak">Tiga tanda Anda butuh lebih dari rata-rata bergerak</h2>
+<ol type="1">
+<li><strong>Pola musiman kuat</strong> — misalnya lonjakan menjelang Idulfitri yang tanggalnya bergeser setiap tahun.</li>
+<li><strong>Dipengaruhi faktor luar</strong> yang bisa diketahui sebelumnya: promosi, harga, hari libur.</li>
+<li><strong>Biaya salah prediksi tinggi</strong> — produk mudah rusak, atau stok habis berarti kehilangan pelanggan.</li>
+</ol>
+</section>
+<section id="tanda-anda-belum-membutuhkannya" class="level2">
+<h2 class="anchored" data-anchor-id="tanda-anda-belum-membutuhkannya">Tanda Anda belum membutuhkannya</h2>
+<ul>
+<li>Permintaan stabil dan volumenya kecil.</li>
+<li>Data historis kurang dari satu siklus musiman penuh.</li>
+<li>Belum ada proses yang akan <em>memakai</em> forecast untuk mengambil keputusan.</li>
+</ul>
+</section>
+<section id="ukur-dengan-metrik-yang-tepat" class="level2">
+<h2 class="anchored" data-anchor-id="ukur-dengan-metrik-yang-tepat">Ukur dengan metrik yang tepat</h2>
+<p>Gunakan metrik yang sesuai dengan biaya bisnis. MAPE terlihat intuitif tetapi meledak untuk SKU dengan penjualan mendekati nol; untuk kasus itu, pertimbangkan MASE atau <em>weighted</em> MAPE.</p>
+<hr>
+<p>Kami menerapkan pendekatan ini di proyek <a href="../../../proyek/forecast-permintaan/index.html">Forecast Permintaan 1.200 SKU</a>.</p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Kembali ke atas</a> ]]></description>
+  <category>Forecasting</category>
+  <category>Metodologi</category>
+  <guid>https://USERNAME.github.io/portofolio-tim/blog/posts/2026-09-02-forecast-vs-moving-average/</guid>
+  <pubDate>Tue, 01 Sep 2026 17:00:00 GMT</pubDate>
+  <media:content url="https://USERNAME.github.io/portofolio-tim/blog/posts/2026-09-02-forecast-vs-moving-average/cover.svg" medium="image" type="image/svg+xml"/>
+</item>
+<item>
+  <title>5 Kesalahan Umum saat Membuat Dashboard (dan Cara Menghindarinya)</title>
+  <dc:creator>Nadia Putri</dc:creator>
+  <link>https://USERNAME.github.io/portofolio-tim/blog/posts/2026-08-12-kesalahan-dashboard/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Kebanyakan dashboard yang kami audit tidak gagal karena salah memilih tools. Mereka gagal karena dibuat sebelum ada yang bertanya: <em>keputusan apa yang akan diambil dari layar ini?</em></p>
+<section id="mulai-dari-data-bukan-dari-keputusan" class="level2">
+<h2 class="anchored" data-anchor-id="mulai-dari-data-bukan-dari-keputusan">1. Mulai dari data, bukan dari keputusan</h2>
+<p>Gejalanya: 15 grafik untuk semua kolom yang tersedia. Mulailah dengan menulis 3–5 pertanyaan yang akan dijawab pengguna setiap minggu, lalu buang grafik yang tidak menjawab satu pun.</p>
+</section>
+<section id="metrik-tanpa-definisi" class="level2">
+<h2 class="anchored" data-anchor-id="metrik-tanpa-definisi">2. Metrik tanpa definisi</h2>
+<p>“Pelanggan aktif” menurut tim marketing dan tim finance sering berbeda. Tulis definisi setiap metrik — rumus, filter, dan sumber — di halaman yang sama dengan grafiknya.</p>
+</section>
+<section id="tidak-ada-pembanding" class="level2">
+<h2 class="anchored" data-anchor-id="tidak-ada-pembanding">3. Tidak ada pembanding</h2>
+<p>Angka “Rp 4,8 miliar” tidak berarti apa-apa tanpa konteks. Selalu sertakan pembanding: target, periode sebelumnya, atau rata-rata segmen.</p>
+</section>
+<section id="dua-sumbu-y-dalam-satu-grafik" class="level2">
+<h2 class="anchored" data-anchor-id="dua-sumbu-y-dalam-satu-grafik">4. Dua sumbu Y dalam satu grafik</h2>
+<p>Grafik dengan dua skala berbeda hampir selalu menyesatkan, karena kemiringan garis bisa diatur sesuka hati. Pisahkan menjadi dua grafik yang disejajarkan, atau indeks keduanya ke basis yang sama.</p>
+</section>
+<section id="tidak-pernah-dicek-apakah-dipakai" class="level2">
+<h2 class="anchored" data-anchor-id="tidak-pernah-dicek-apakah-dipakai">5. Tidak pernah dicek apakah dipakai</h2>
+<p>Pasang pelacakan penggunaan. Dashboard yang tidak dibuka selama sebulan adalah kandidat untuk dirombak — atau dihapus.</p>
+<hr>
+<p><strong>Intinya:</strong> dashboard yang baik lebih mirip jawaban daripada gudang data.</p>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Kembali ke atas</a> ]]></description>
+  <category>Dashboard</category>
+  <category>Data Storytelling</category>
+  <guid>https://USERNAME.github.io/portofolio-tim/blog/posts/2026-08-12-kesalahan-dashboard/</guid>
+  <pubDate>Tue, 11 Aug 2026 17:00:00 GMT</pubDate>
+  <media:content url="https://USERNAME.github.io/portofolio-tim/blog/posts/2026-08-12-kesalahan-dashboard/cover.svg" medium="image" type="image/svg+xml"/>
+</item>
+</channel>
+</rss>

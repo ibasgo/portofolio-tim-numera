@@ -1,0 +1,387 @@
+[
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog & Insight",
+    "section": "",
+    "text": "Kapan Perlu Forecasting, Kapan Cukup Rata-rata Bergerak?\n\n\nModel canggih tidak selalu menang. Cara sederhana untuk memutuskan apakah investasi forecasting sepadan.\n\n\n\n\n\n2 September 2026\n\n\nSari Wulandari\n\n1 menit\n\n\n\n\n\n\n\n\n\n\n\n5 Kesalahan Umum saat Membuat Dashboard (dan Cara Menghindarinya)\n\n\nDashboard jarang gagal karena teknologinya. Ia gagal karena tidak menjawab pertanyaan siapa pun.\n\n\n\n\n\n12 Agustus 2026\n\n\nNadia Putri\n\n1 menit\n\n\n\n\nTidak ada yang cocok\n Kembali ke atas"
+  },
+  {
+    "objectID": "proyek/analisis-penjualan/index.html",
+    "href": "proyek/analisis-penjualan/index.html",
+    "title": "Diskon Besar, Margin Hilang: Analisis Penjualan Ritel",
+    "section": "",
+    "text": "Klien\nJaringan ritel (anonim)\n\n\nDurasi\n5 minggu\n\n\nTim\nAndi · Nadia\n\n\nTools\nR · dplyr · ggplot2"
+  },
+  {
+    "objectID": "proyek/analisis-penjualan/index.html#masalah",
+    "href": "proyek/analisis-penjualan/index.html#masalah",
+    "title": "Diskon Besar, Margin Hilang: Analisis Penjualan Ritel",
+    "section": "Masalah",
+    "text": "Masalah\nPendapatan klien terus naik, tetapi laba kotor tidak ikut naik — bahkan turun. Manajemen menduga kenaikan biaya logistik. Pertanyaan kami: dari mana sebenarnya margin itu bocor?"
+  },
+  {
+    "objectID": "proyek/analisis-penjualan/index.html#data",
+    "href": "proyek/analisis-penjualan/index.html#data",
+    "title": "Diskon Besar, Margin Hilang: Analisis Penjualan Ritel",
+    "section": "Data",
+    "text": "Data\n\n\nTampilkan kode\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(scales)\n\n# Grafik berlatar transparan & teks abu netral agar terbaca di mode terang maupun gelap\nknitr::opts_chunk$set(dev = \"png\", dev.args = list(bg = \"transparent\"), dpi = 150)\nBRAND &lt;- \"#0D9488\"; MUTED &lt;- \"#94A3B8\"; INK &lt;- \"#64748B\"; NEG &lt;- \"#DC2626\"\ntheme_set(\n  theme_minimal(base_size = 13) +\n    theme(\n      text = element_text(colour = INK), axis.text = element_text(colour = INK),\n      panel.grid.major = element_line(colour = alpha(INK, .18), linewidth = .4),\n      panel.grid.minor = element_blank(),\n      plot.background = element_rect(fill = \"transparent\", colour = NA),\n      panel.background = element_rect(fill = \"transparent\", colour = NA),\n      legend.position = \"top\", legend.justification = \"left\",\n      legend.background = element_rect(fill = \"transparent\", colour = NA)\n    )\n)\n\n# Format angka gaya Indonesia\npct &lt;- function(x, d = 0) percent(x, accuracy = 10^-d, decimal.mark = \",\", big.mark = \".\")\nribuan &lt;- function(x) number(x, big.mark = \".\", decimal.mark = \",\")\nrupiah &lt;- function(x) paste0(ifelse(x &lt; 0, \"-\", \"\"), \"Rp\", ribuan(abs(x)))\nBULAN &lt;- c(\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"Mei\", \"Jun\", \"Jul\", \"Agu\", \"Sep\", \"Okt\", \"Nov\", \"Des\")\nbulan_id &lt;- function(d) ifelse(is.na(d), NA, paste(BULAN[as.integer(format(d, \"%m\"))], format(d, \"%Y\")))\n\n# ---------- Data sintetis ----------\nset.seed(42)\nn &lt;- 30000\nref &lt;- tibble(  # harga rata-rata, margin kotor sebelum diskon, peluang diberi diskon\n  kategori = c(\"Elektronik\", \"Fashion\", \"Kecantikan\", \"Rumah Tangga\", \"Makanan\", \"Olahraga\"),\n  harga    = c(2400000, 320000, 180000, 410000, 95000, 650000),\n  margin   = c(.16, .28, .30, .30, .22, .32),\n  peluang  = c(.70, .75, .70, .30, .20, .30),\n  bobot    = c(.12, .24, .16, .18, .20, .10)\n)\n\nhari    &lt;- 0:545\ntanggal &lt;- as.Date(\"2025-01-01\") + sample(hari, n, replace = TRUE, prob = 1 + hari / 546 * .6)\nidx     &lt;- sample(seq_len(nrow(ref)), n, replace = TRUE, prob = ref$bobot)\nwaktu   &lt;- as.numeric(tanggal - min(tanggal)) / 545          # 0 → 1\n\n# promosi makin agresif: peluang dan besar diskon naik seiring waktu\ndapat &lt;- runif(n) &lt; ref$peluang[idx] * (.55 + .45 * waktu)\nbesar &lt;- sample(c(.05, .10, .15, .20, .25, .30, .40), n, replace = TRUE,\n                prob = c(.18, .20, .17, .15, .12, .10, .08))\nbesar &lt;- ifelse(runif(n) &lt; waktu * .22,\n                pmax(besar, sample(c(.25, .30, .40), n, replace = TRUE)), besar)\ndiskon      &lt;- ifelse(dapat, besar, 0)\nharga       &lt;- ref$harga[idx] * rlnorm(n, 0, .35)\nqty         &lt;- sample(1:3, n, replace = TRUE)\nbiaya_promo &lt;- ifelse(diskon &gt; .20, .04, 0)                  # ongkir gratis, materi promosi, dll.\n\ndf &lt;- tibble(\n  tanggal, kategori = ref$kategori[idx],\n  wilayah = sample(c(\"Jawa\", \"Sumatra\", \"Kalimantan\", \"Sulawesi\"), n, replace = TRUE,\n                   prob = c(.55, .20, .13, .12)),\n  qty, diskon,\n  pendapatan = harga * qty * (1 - diskon),\n  laba       = harga * qty * (ref$margin[idx] - diskon - biaya_promo)\n)\n\n# angka ringkas yang dikutip di teks\nh1_25 &lt;- filter(df, tanggal &lt;  as.Date(\"2025-07-01\"))\nh1_26 &lt;- filter(df, tanggal &gt;= as.Date(\"2026-01-01\"))\ntumbuh_pend &lt;- sum(h1_26$pendapatan) / sum(h1_25$pendapatan) - 1\ntumbuh_laba &lt;- sum(h1_26$laba) / sum(h1_25$laba) - 1\nporsi_besar &lt;- function(d) sum(d$pendapatan[d$diskon &gt; .20]) / sum(d$pendapatan)\n\ndf |&gt;\n  head(5) |&gt;\n  mutate(tanggal = format(tanggal, \"%d-%m-%Y\"), diskon = pct(diskon),\n         pendapatan = rupiah(pendapatan), laba = rupiah(laba)) |&gt;\n  knitr::kable(align = \"llllrrr\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntanggal\nkategori\nwilayah\nqty\ndiskon\npendapatan\nlaba\n\n\n\n\n17-11-2025\nKecantikan\nJawa\n2\n5%\nRp355.884\nRp93.654\n\n\n15-03-2025\nRumah Tangga\nSulawesi\n3\n0%\nRp1.859.263\nRp557.779\n\n\n26-05-2025\nKecantikan\nKalimantan\n1\n25%\nRp141.222\nRp1.883\n\n\n18-02-2025\nElektronik\nSumatra\n2\n0%\nRp5.824.791\nRp931.967\n\n\n30-10-2025\nRumah Tangga\nJawa\n3\n30%\nRp1.318.956\n-Rp75.369\n\n\n\n\n\nData berisi 30.000 transaksi dari Januari 2025 hingga Juni 2026, mencakup empat wilayah dan enam kategori produk."
+  },
+  {
+    "objectID": "proyek/analisis-penjualan/index.html#temuan-1-pendapatan-naik-laba-tidak-ikut",
+    "href": "proyek/analisis-penjualan/index.html#temuan-1-pendapatan-naik-laba-tidak-ikut",
+    "title": "Diskon Besar, Margin Hilang: Analisis Penjualan Ritel",
+    "section": "Temuan 1 — Pendapatan naik, laba tidak ikut",
+    "text": "Temuan 1 — Pendapatan naik, laba tidak ikut\nMembandingkan semester I 2026 dengan semester I 2025: pendapatan tumbuh 30%, sementara laba kotor justru turun 4%.\n\n\nTampilkan kode\nbulanan &lt;- df |&gt;\n  mutate(bulan = as.Date(format(tanggal, \"%Y-%m-01\"))) |&gt;\n  group_by(bulan) |&gt;\n  summarise(Pendapatan = sum(pendapatan) / 1e9, `Laba kotor` = sum(laba) / 1e9) |&gt;\n  tidyr::pivot_longer(-bulan, names_to = \"seri\", values_to = \"nilai\") |&gt;\n  mutate(seri = factor(seri, levels = c(\"Pendapatan\", \"Laba kotor\")))\n\nlabel_akhir &lt;- bulanan |&gt; filter(bulan == max(bulan))\n\nggplot(bulanan, aes(bulan, nilai, colour = seri)) +\n  geom_line(linewidth = .9) +\n  geom_text(data = label_akhir, aes(label = seri), hjust = 1, vjust = -.9,\n            colour = INK, size = 3.5, show.legend = FALSE) +\n  scale_colour_manual(values = c(Pendapatan = BRAND, `Laba kotor` = MUTED), name = NULL) +\n  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = c(0, .12)),\n                     labels = label_number(decimal.mark = \",\")) +\n  scale_x_date(labels = bulan_id, date_breaks = \"3 months\") +\n  labs(x = NULL, y = \"Miliar Rp\")\n\n\n\n\n\n\n\n\nGambar 1: Pendapatan dan laba kotor bulanan (miliar Rp). Jarak antara kedua garis melebar sejak pertengahan 2025."
+  },
+  {
+    "objectID": "proyek/analisis-penjualan/index.html#temuan-2-kebocoran-terjadi-di-diskon-besar",
+    "href": "proyek/analisis-penjualan/index.html#temuan-2-kebocoran-terjadi-di-diskon-besar",
+    "title": "Diskon Besar, Margin Hilang: Analisis Penjualan Ritel",
+    "section": "Temuan 2 — Kebocoran terjadi di diskon besar",
+    "text": "Temuan 2 — Kebocoran terjadi di diskon besar\nPorsi pendapatan dari transaksi berdiskon di atas 20% naik dari 9% (semester I 2025) menjadi 17% (semester I 2026). Masalahnya, di tingkat diskon itu rata-rata transaksi sudah merugi.\n\n\nTampilkan kode\nper_diskon &lt;- df |&gt;\n  mutate(grup = cut(diskon, c(-.01, 0, .10, .20, .30, .5),\n                    labels = c(\"0%\", \"1–10%\", \"11–20%\", \"21–30%\", \"&gt;30%\"))) |&gt;\n  group_by(grup) |&gt;\n  summarise(margin = sum(laba) / sum(pendapatan)) |&gt;\n  mutate(tanda = ifelse(margin &gt;= 0, \"untung\", \"rugi\"))\n\nggplot(per_diskon, aes(grup, margin, fill = tanda)) +\n  geom_col(width = .55) +\n  geom_hline(yintercept = 0, colour = INK, linewidth = .4) +\n  geom_text(aes(label = pct(margin), vjust = ifelse(margin &gt;= 0, -.5, 1.5)),\n            colour = INK, size = 3.5) +\n  scale_fill_manual(values = c(untung = BRAND, rugi = NEG), guide = \"none\") +\n  scale_y_continuous(labels = \\(x) pct(x), expand = expansion(mult = .15)) +\n  labs(x = \"Tingkat diskon\", y = \"Margin laba kotor\") +\n  theme(panel.grid.major.x = element_blank())\n\n\n\n\n\n\n\n\nGambar 2: Margin laba kotor per tingkat diskon, seluruh periode. Di atas 20%, margin menjadi negatif.\n\n\n\n\n\nKerugian itu tidak tersebar merata. Tabel berikut menunjukkan kategori mana yang paling banyak kehilangan laba dari transaksi berdiskon besar.\n\n\nTampilkan kode\ntabel &lt;- df |&gt;\n  group_by(kategori) |&gt;\n  summarise(\n    porsi      = sum(pendapatan[diskon &gt; .20]) / sum(pendapatan),\n    margin     = sum(laba) / sum(pendapatan),\n    laba_besar = sum(laba[diskon &gt; .20]) / 1e9,\n    pendapatan = sum(pendapatan)   # diringkas terakhir agar kolom asli tidak tertimpa\n  ) |&gt;\n  arrange(laba_besar)\n\ntabel |&gt;\n  transmute(\n    Kategori = kategori,\n    `Pendapatan total (M Rp)` = number(pendapatan / 1e9, accuracy = .1, decimal.mark = \",\"),\n    `Porsi diskon &gt;20%` = pct(porsi),\n    `Margin total` = pct(margin, 1),\n    `Laba dari diskon &gt;20% (M Rp)` = number(laba_besar, accuracy = .01, decimal.mark = \",\",\n                                            style_positive = \"plus\")\n  ) |&gt;\n  knitr::kable(align = \"lrrrr\")\n\n\n\n\nTabel 1: Laba kotor dari transaksi berdiskon di atas 20%, per kategori (seluruh periode).\n\n\n\n\n\n\n\n\n\n\n\n\n\nKategori\nPendapatan total (M Rp)\nPorsi diskon &gt;20%\nMargin total\nLaba dari diskon &gt;20% (M Rp)\n\n\n\n\nElektronik\n16,4\n16%\n4,7%\n-0,76\n\n\nFashion\n4,3\n18%\n17,3%\n-0,09\n\n\nRumah Tangga\n4,5\n7%\n26,2%\n-0,02\n\n\nKecantikan\n1,6\n18%\n20,3%\n-0,02\n\n\nMakanan\n1,2\n4%\n19,3%\n-0,01\n\n\nOlahraga\n4,0\n6%\n28,6%\n-0,01\n\n\n\n\n\n\n\n\nElektronik menyumbang 84% dari seluruh kerugian di transaksi berdiskon besar. Penyebabnya sederhana: margin kotor kategori ini sebelum diskon hanya sekitar 16%, sehingga diskon 20% ke atas hampir pasti membuat transaksi merugi."
+  },
+  {
+    "objectID": "proyek/analisis-penjualan/index.html#rekomendasi",
+    "href": "proyek/analisis-penjualan/index.html#rekomendasi",
+    "title": "Diskon Besar, Margin Hilang: Analisis Penjualan Ritel",
+    "section": "Rekomendasi",
+    "text": "Rekomendasi\n\nBatas diskon per kategori, bukan satu angka untuk semua. Diskon maksimum sebaiknya di bawah margin kotor kategori tersebut — untuk Elektronik, jauh di bawah 20%.\nGanti diskon besar dengan bundling atau poin loyalitas yang biayanya lebih terkendali.\nPasang guardrail di sistem kasir: diskon di atas batas butuh persetujuan manajer area.\nPantau margin per tingkat diskon di dashboard mingguan, bukan hanya total pendapatan."
+  },
+  {
+    "objectID": "proyek/analisis-penjualan/index.html#dampak",
+    "href": "proyek/analisis-penjualan/index.html#dampak",
+    "title": "Diskon Besar, Margin Hilang: Analisis Penjualan Ritel",
+    "section": "Dampak",
+    "text": "Dampak\nSetelah kebijakan batas diskon diuji di satu wilayah selama 8 minggu, margin laba kotor naik 4,1 poin persentase dengan penurunan volume penjualan yang tidak signifikan secara statistik. (Angka dampak ini adalah contoh — ganti dengan hasil proyek Anda.)"
+  },
+  {
+    "objectID": "tim/andi.html",
+    "href": "tim/andi.html",
+    "title": "Andi Pratama",
+    "section": "",
+    "text": "Andi memimpin tim dalam merumuskan masalah dan memastikan setiap analisis berakhir pada keputusan. Berpengalaman di sektor ritel dan fintech, ia terbiasa menjembatani tim teknis dengan manajemen."
+  },
+  {
+    "objectID": "tim/andi.html#keahlian",
+    "href": "tim/andi.html#keahlian",
+    "title": "Andi Pratama",
+    "section": "Keahlian",
+    "text": "Keahlian\nSQL R A/B Testing Stakeholder Mgmt"
+  },
+  {
+    "objectID": "tim/andi.html#pengalaman",
+    "href": "tim/andi.html#pengalaman",
+    "title": "Andi Pratama",
+    "section": "Pengalaman",
+    "text": "Pengalaman\n\nLead Data Analyst · DataKita · 2023 – sekarang\nSenior Data Analyst · Perusahaan Ritel (contoh) · 2019 – 2023\nBusiness Analyst · Startup Fintech (contoh) · 2017 – 2019"
+  },
+  {
+    "objectID": "tim/andi.html#pendidikan",
+    "href": "tim/andi.html#pendidikan",
+    "title": "Andi Pratama",
+    "section": "Pendidikan",
+    "text": "Pendidikan\nS1 Statistika"
+  },
+  {
+    "objectID": "tim/andi.html#proyek-yang-melibatkan-andi",
+    "href": "tim/andi.html#proyek-yang-melibatkan-andi",
+    "title": "Andi Pratama",
+    "section": "Proyek yang melibatkan Andi",
+    "text": "Proyek yang melibatkan Andi\n\n\n\n\n\nTanggal\n\n\nProyek\n\n\nKategori\n\n\n\n\n\n\n15 Jul 2026\n\n\nDiskon Besar, Margin Hilang: Analisis Penjualan Ritel\n\n\nR, Analisis Eksploratif, Ritel\n\n\n\n\n5 Nov 2025\n\n\nForecast Permintaan Mingguan untuk 1.200 SKU\n\n\nForecasting, R, Airflow, Distribusi\n\n\n\n\nTidak ada yang cocok"
+  },
+  {
+    "objectID": "tim/nadia.html",
+    "href": "tim/nadia.html",
+    "title": "Nadia Putri",
+    "section": "",
+    "text": "Nadia menggabungkan desain informasi dan pemahaman bisnis. Ia memulai setiap dashboard dengan wawancara pengguna, bukan dengan memilih jenis grafik."
+  },
+  {
+    "objectID": "tim/nadia.html#keahlian",
+    "href": "tim/nadia.html#keahlian",
+    "title": "Nadia Putri",
+    "section": "Keahlian",
+    "text": "Keahlian\nPower BI Looker Studio Data Storytelling UX"
+  },
+  {
+    "objectID": "tim/nadia.html#pengalaman",
+    "href": "tim/nadia.html#pengalaman",
+    "title": "Nadia Putri",
+    "section": "Pengalaman",
+    "text": "Pengalaman\n\nBI Specialist · DataKita · 2023 – sekarang\nBI Developer · Perusahaan FMCG (contoh) · 2019 – 2023"
+  },
+  {
+    "objectID": "tim/nadia.html#pendidikan",
+    "href": "tim/nadia.html#pendidikan",
+    "title": "Nadia Putri",
+    "section": "Pendidikan",
+    "text": "Pendidikan\nS1 Sistem Informasi"
+  },
+  {
+    "objectID": "tim/nadia.html#proyek-yang-melibatkan-nadia",
+    "href": "tim/nadia.html#proyek-yang-melibatkan-nadia",
+    "title": "Nadia Putri",
+    "section": "Proyek yang melibatkan Nadia",
+    "text": "Proyek yang melibatkan Nadia\n\n\n\n\n\nTanggal\n\n\nProyek\n\n\nKategori\n\n\n\n\n\n\n15 Jul 2026\n\n\nDiskon Besar, Margin Hilang: Analisis Penjualan Ritel\n\n\nR, Analisis Eksploratif, Ritel\n\n\n\n\n20 Apr 2026\n\n\nDashboard Early-Warning Churn Pelanggan\n\n\nPower BI, Machine Learning, Telekomunikasi\n\n\n\n\nTidak ada yang cocok"
+  },
+  {
+    "objectID": "blog/posts/2026-08-12-kesalahan-dashboard/index.html",
+    "href": "blog/posts/2026-08-12-kesalahan-dashboard/index.html",
+    "title": "5 Kesalahan Umum saat Membuat Dashboard (dan Cara Menghindarinya)",
+    "section": "",
+    "text": "Kebanyakan dashboard yang kami audit tidak gagal karena salah memilih tools. Mereka gagal karena dibuat sebelum ada yang bertanya: keputusan apa yang akan diambil dari layar ini?"
+  },
+  {
+    "objectID": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#mulai-dari-data-bukan-dari-keputusan",
+    "href": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#mulai-dari-data-bukan-dari-keputusan",
+    "title": "5 Kesalahan Umum saat Membuat Dashboard (dan Cara Menghindarinya)",
+    "section": "1. Mulai dari data, bukan dari keputusan",
+    "text": "1. Mulai dari data, bukan dari keputusan\nGejalanya: 15 grafik untuk semua kolom yang tersedia. Mulailah dengan menulis 3–5 pertanyaan yang akan dijawab pengguna setiap minggu, lalu buang grafik yang tidak menjawab satu pun."
+  },
+  {
+    "objectID": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#metrik-tanpa-definisi",
+    "href": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#metrik-tanpa-definisi",
+    "title": "5 Kesalahan Umum saat Membuat Dashboard (dan Cara Menghindarinya)",
+    "section": "2. Metrik tanpa definisi",
+    "text": "2. Metrik tanpa definisi\n“Pelanggan aktif” menurut tim marketing dan tim finance sering berbeda. Tulis definisi setiap metrik — rumus, filter, dan sumber — di halaman yang sama dengan grafiknya."
+  },
+  {
+    "objectID": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#tidak-ada-pembanding",
+    "href": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#tidak-ada-pembanding",
+    "title": "5 Kesalahan Umum saat Membuat Dashboard (dan Cara Menghindarinya)",
+    "section": "3. Tidak ada pembanding",
+    "text": "3. Tidak ada pembanding\nAngka “Rp 4,8 miliar” tidak berarti apa-apa tanpa konteks. Selalu sertakan pembanding: target, periode sebelumnya, atau rata-rata segmen."
+  },
+  {
+    "objectID": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#dua-sumbu-y-dalam-satu-grafik",
+    "href": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#dua-sumbu-y-dalam-satu-grafik",
+    "title": "5 Kesalahan Umum saat Membuat Dashboard (dan Cara Menghindarinya)",
+    "section": "4. Dua sumbu Y dalam satu grafik",
+    "text": "4. Dua sumbu Y dalam satu grafik\nGrafik dengan dua skala berbeda hampir selalu menyesatkan, karena kemiringan garis bisa diatur sesuka hati. Pisahkan menjadi dua grafik yang disejajarkan, atau indeks keduanya ke basis yang sama."
+  },
+  {
+    "objectID": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#tidak-pernah-dicek-apakah-dipakai",
+    "href": "blog/posts/2026-08-12-kesalahan-dashboard/index.html#tidak-pernah-dicek-apakah-dipakai",
+    "title": "5 Kesalahan Umum saat Membuat Dashboard (dan Cara Menghindarinya)",
+    "section": "5. Tidak pernah dicek apakah dipakai",
+    "text": "5. Tidak pernah dicek apakah dipakai\nPasang pelacakan penggunaan. Dashboard yang tidak dibuka selama sebulan adalah kandidat untuk dirombak — atau dihapus.\n\nIntinya: dashboard yang baik lebih mirip jawaban daripada gudang data."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Dari data mentah ke keputusan bisnis.",
+    "section": "",
+    "text": "Konsultan Data Analyst\n\n\n\nKami tim analis, data scientist, dan data engineer yang membantu perusahaan membaca data mereka sendiri — lewat analisis yang jujur, dashboard yang dipakai, dan model yang bisa dijelaskan.\n\n\nLihat Proyek Kenali Tim\n\n\n\n\nPendapatan bulanan (contoh)\nRp 4,8 M ▲ 12,4% MoM"
+  },
+  {
+    "objectID": "index.html#apa-yang-kami-kerjakan",
+    "href": "index.html#apa-yang-kami-kerjakan",
+    "title": "Dari data mentah ke keputusan bisnis.",
+    "section": "Apa yang kami kerjakan",
+    "text": "Apa yang kami kerjakan"
+  },
+  {
+    "objectID": "index.html#proyek-unggulan",
+    "href": "index.html#proyek-unggulan",
+    "title": "Dari data mentah ke keputusan bisnis.",
+    "section": "Proyek unggulan",
+    "text": "Proyek unggulan\nSemua proyek →"
+  },
+  {
+    "objectID": "index.html#tulisan-terbaru",
+    "href": "index.html#tulisan-terbaru",
+    "title": "Dari data mentah ke keputusan bisnis.",
+    "section": "Tulisan terbaru",
+    "text": "Tulisan terbaru\nSemua tulisan →"
+  },
+  {
+    "objectID": "index.html#punya-data-tapi-belum-punya-jawaban",
+    "href": "index.html#punya-data-tapi-belum-punya-jawaban",
+    "title": "Dari data mentah ke keputusan bisnis.",
+    "section": "Punya data tapi belum punya jawaban?",
+    "text": "Punya data tapi belum punya jawaban?\nCeritakan masalah bisnis Anda. Kami bantu merumuskan pertanyaan yang tepat sebelum menyentuh satu baris kode pun.\nHubungi Kami"
+  },
+  {
+    "objectID": "proyek.html",
+    "href": "proyek.html",
+    "title": "Proyek",
+    "section": "",
+    "text": "Urut berdasar\n      Default\n      \n        Tanggal - Paling lama\n      \n      \n        Tanggal - Paling baru\n      \n      \n        Judul\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nDiskon Besar, Margin Hilang: Analisis Penjualan Ritel\n\n\n\nR\n\nAnalisis Eksploratif\n\nRitel\n\n\n\nPendapatan naik, laba turun. Kami melacak kebocorannya ke transaksi berdiskon di atas 20% — lengkap dengan kode R yang bisa direproduksi.\n\n\n\nJuli 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\nDashboard Early-Warning Churn Pelanggan\n\n\n\nPower BI\n\nMachine Learning\n\nTelekomunikasi\n\n\n\nDashboard Power BI yang menandai pelanggan berisiko berhenti 30 hari lebih awal, dipakai tim retensi setiap pagi.\n\n\n\nApril 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\nForecast Permintaan Mingguan untuk 1.200 SKU\n\n\n\nForecasting\n\nR\n\nAirflow\n\nDistribusi\n\n\n\nPipeline forecasting otomatis yang memangkas stok berlebih 22% tanpa menaikkan kejadian stok habis.\n\n\n\nNovember 2025\n\n\n\n\n\n\nTidak ada yang cocok\n Kembali ke atas"
+  },
+  {
+    "objectID": "tim.html",
+    "href": "tim.html",
+    "title": "Tim Kami",
+    "section": "",
+    "text": "Andi Pratama\n      Lead Data Analyst\n      Menerjemahkan pertanyaan bisnis menjadi analisis yang terukur dan rekomendasi yang bisa dieksekusi.\n      \n        SQLRA/B TestingStakeholder Mgmt\n      \n    \n  \n\n  \n    \n    \n      Sari Wulandari\n      Data Scientist\n      Membangun model prediksi churn dan permintaan yang akurat sekaligus bisa dijelaskan ke tim bisnis.\n      \n        Machine LearningForecastingtidymodelsfable\n      \n    \n  \n\n  \n    \n    \n      Bima Saputra\n      Data Engineer\n      Merancang pipeline dan data warehouse agar data selalu bersih, tepat waktu, dan terdokumentasi.\n      \n        dbtAirflowBigQueryDocker\n      \n    \n  \n\n  \n    \n    \n      Nadia Putri\n      BI & Visualization Specialist\n      Mendesain dashboard yang benar-benar dipakai: sedikit grafik, definisi metrik jelas, cerita yang tajam.\n      \n        Power BILooker StudioData StorytellingUX\n      \n    \n  \n\n\nTidak ada yang cocok\n Kembali ke atas"
+  },
+  {
+    "objectID": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html",
+    "href": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html",
+    "title": "Kapan Perlu Forecasting, Kapan Cukup Rata-rata Bergerak?",
+    "section": "",
+    "text": "Pertanyaan yang paling sering kami terima dari klien distribusi: “Apakah kami butuh machine learning untuk forecast?” Jawaban jujurnya: belum tentu."
+  },
+  {
+    "objectID": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html#mulai-dari-baseline",
+    "href": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html#mulai-dari-baseline",
+    "title": "Kapan Perlu Forecasting, Kapan Cukup Rata-rata Bergerak?",
+    "section": "Mulai dari baseline",
+    "text": "Mulai dari baseline\nSebelum membangun model apa pun, hitung akurasi dua metode paling sederhana:\n\nNaive musiman — permintaan minggu ini = permintaan minggu yang sama tahun lalu.\nRata-rata bergerak — rata-rata 4–8 minggu terakhir.\n\nJika model Anda tidak mengalahkan keduanya secara konsisten pada data uji, model itu tidak layak dipakai."
+  },
+  {
+    "objectID": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html#tiga-tanda-anda-butuh-lebih-dari-rata-rata-bergerak",
+    "href": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html#tiga-tanda-anda-butuh-lebih-dari-rata-rata-bergerak",
+    "title": "Kapan Perlu Forecasting, Kapan Cukup Rata-rata Bergerak?",
+    "section": "Tiga tanda Anda butuh lebih dari rata-rata bergerak",
+    "text": "Tiga tanda Anda butuh lebih dari rata-rata bergerak\n\nPola musiman kuat — misalnya lonjakan menjelang Idulfitri yang tanggalnya bergeser setiap tahun.\nDipengaruhi faktor luar yang bisa diketahui sebelumnya: promosi, harga, hari libur.\nBiaya salah prediksi tinggi — produk mudah rusak, atau stok habis berarti kehilangan pelanggan."
+  },
+  {
+    "objectID": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html#tanda-anda-belum-membutuhkannya",
+    "href": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html#tanda-anda-belum-membutuhkannya",
+    "title": "Kapan Perlu Forecasting, Kapan Cukup Rata-rata Bergerak?",
+    "section": "Tanda Anda belum membutuhkannya",
+    "text": "Tanda Anda belum membutuhkannya\n\nPermintaan stabil dan volumenya kecil.\nData historis kurang dari satu siklus musiman penuh.\nBelum ada proses yang akan memakai forecast untuk mengambil keputusan."
+  },
+  {
+    "objectID": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html#ukur-dengan-metrik-yang-tepat",
+    "href": "blog/posts/2026-09-02-forecast-vs-moving-average/index.html#ukur-dengan-metrik-yang-tepat",
+    "title": "Kapan Perlu Forecasting, Kapan Cukup Rata-rata Bergerak?",
+    "section": "Ukur dengan metrik yang tepat",
+    "text": "Ukur dengan metrik yang tepat\nGunakan metrik yang sesuai dengan biaya bisnis. MAPE terlihat intuitif tetapi meledak untuk SKU dengan penjualan mendekati nol; untuk kasus itu, pertimbangkan MASE atau weighted MAPE.\n\nKami menerapkan pendekatan ini di proyek Forecast Permintaan 1.200 SKU."
+  },
+  {
+    "objectID": "tim/bima.html",
+    "href": "tim/bima.html",
+    "title": "Bima Saputra",
+    "section": "",
+    "text": "Bima memastikan fondasi data kokoh: dari ingest, transformasi, hingga pengujian kualitas data. Ia merapikan sumber data yang berserakan menjadi satu sumber kebenaran."
+  },
+  {
+    "objectID": "tim/bima.html#keahlian",
+    "href": "tim/bima.html#keahlian",
+    "title": "Bima Saputra",
+    "section": "Keahlian",
+    "text": "Keahlian\ndbt Airflow BigQuery Docker"
+  },
+  {
+    "objectID": "tim/bima.html#pengalaman",
+    "href": "tim/bima.html#pengalaman",
+    "title": "Bima Saputra",
+    "section": "Pengalaman",
+    "text": "Pengalaman\n\nData Engineer · DataKita · 2024 – sekarang\nData Engineer · Perusahaan Logistik (contoh) · 2020 – 2024"
+  },
+  {
+    "objectID": "tim/bima.html#pendidikan",
+    "href": "tim/bima.html#pendidikan",
+    "title": "Bima Saputra",
+    "section": "Pendidikan",
+    "text": "Pendidikan\nS1 Teknik Informatika"
+  },
+  {
+    "objectID": "tim/bima.html#proyek-yang-melibatkan-bima",
+    "href": "tim/bima.html#proyek-yang-melibatkan-bima",
+    "title": "Bima Saputra",
+    "section": "Proyek yang melibatkan Bima",
+    "text": "Proyek yang melibatkan Bima\n\n\n\n\n\nTanggal\n\n\nProyek\n\n\nKategori\n\n\n\n\n\n\n20 Apr 2026\n\n\nDashboard Early-Warning Churn Pelanggan\n\n\nPower BI, Machine Learning, Telekomunikasi\n\n\n\n\n5 Nov 2025\n\n\nForecast Permintaan Mingguan untuk 1.200 SKU\n\n\nForecasting, R, Airflow, Distribusi\n\n\n\n\nTidak ada yang cocok"
+  },
+  {
+    "objectID": "tim/sari.html",
+    "href": "tim/sari.html",
+    "title": "Sari Wulandari",
+    "section": "",
+    "text": "Sari fokus pada pemodelan prediktif dan eksperimen. Ia percaya model yang baik adalah model yang dipahami penggunanya, sehingga setiap proyek disertai evaluasi dan penjelasan fitur yang transparan."
+  },
+  {
+    "objectID": "tim/sari.html#keahlian",
+    "href": "tim/sari.html#keahlian",
+    "title": "Sari Wulandari",
+    "section": "Keahlian",
+    "text": "Keahlian\nMachine Learning Forecasting tidymodels fable"
+  },
+  {
+    "objectID": "tim/sari.html#pengalaman",
+    "href": "tim/sari.html#pengalaman",
+    "title": "Sari Wulandari",
+    "section": "Pengalaman",
+    "text": "Pengalaman\n\nData Scientist · DataKita · 2023 – sekarang\nData Scientist · Perusahaan Telekomunikasi (contoh) · 2020 – 2023"
+  },
+  {
+    "objectID": "tim/sari.html#pendidikan",
+    "href": "tim/sari.html#pendidikan",
+    "title": "Sari Wulandari",
+    "section": "Pendidikan",
+    "text": "Pendidikan\nS2 Ilmu Komputer"
+  },
+  {
+    "objectID": "tim/sari.html#proyek-yang-melibatkan-sari",
+    "href": "tim/sari.html#proyek-yang-melibatkan-sari",
+    "title": "Sari Wulandari",
+    "section": "Proyek yang melibatkan Sari",
+    "text": "Proyek yang melibatkan Sari\n\n\n\n\n\nTanggal\n\n\nProyek\n\n\nKategori\n\n\n\n\n\n\n20 Apr 2026\n\n\nDashboard Early-Warning Churn Pelanggan\n\n\nPower BI, Machine Learning, Telekomunikasi\n\n\n\n\n5 Nov 2025\n\n\nForecast Permintaan Mingguan untuk 1.200 SKU\n\n\nForecasting, R, Airflow, Distribusi\n\n\n\n\nTidak ada yang cocok"
+  },
+  {
+    "objectID": "proyek/forecast-permintaan/index.html",
+    "href": "proyek/forecast-permintaan/index.html",
+    "title": "Forecast Permintaan Mingguan untuk 1.200 SKU",
+    "section": "",
+    "text": "Klien\nDistributor FMCG (anonim)\n\n\nDurasi\n12 minggu\n\n\nTim\nSari · Bima · Andi\n\n\nTools\nR · fable · Airflow"
+  },
+  {
+    "objectID": "proyek/forecast-permintaan/index.html#masalah",
+    "href": "proyek/forecast-permintaan/index.html#masalah",
+    "title": "Forecast Permintaan Mingguan untuk 1.200 SKU",
+    "section": "Masalah",
+    "text": "Masalah\nPerencana stok menyusun pesanan mingguan di spreadsheet berdasarkan rata-rata 4 minggu terakhir. Hasilnya: gudang penuh barang lambat laku, sementara produk musiman sering kosong menjelang hari raya."
+  },
+  {
+    "objectID": "proyek/forecast-permintaan/index.html#pendekatan",
+    "href": "proyek/forecast-permintaan/index.html#pendekatan",
+    "title": "Forecast Permintaan Mingguan untuk 1.200 SKU",
+    "section": "Pendekatan",
+    "text": "Pendekatan\n\nSegmentasi SKU berdasarkan pola permintaan (stabil, musiman, intermiten) — tiap segmen memakai metode berbeda, bukan satu model untuk semua.\nBaseline dulu: setiap model harus mengalahkan seasonal naive dan rata-rata bergerak pada data uji rolling origin. Model yang kalah tidak dipakai.\nVariabel kalender lokal: Ramadan, Idulfitri, dan libur sekolah dimasukkan sebagai regresor.\nOtomatisasi: Airflow menjalankan forecast setiap Senin pukul 05.00 dan mengirim rekomendasi pesanan ke sistem ERP."
+  },
+  {
+    "objectID": "proyek/forecast-permintaan/index.html#pelajaran",
+    "href": "proyek/forecast-permintaan/index.html#pelajaran",
+    "title": "Forecast Permintaan Mingguan untuk 1.200 SKU",
+    "section": "Pelajaran",
+    "text": "Pelajaran\nUntuk 60% SKU yang stabil, metode sederhana sudah cukup. Nilai terbesar justru datang dari menangani 15% SKU musiman dengan benar — di situlah uang paling banyak hilang. Baca juga tulisan kami: Kapan perlu forecasting, kapan cukup rata-rata bergerak."
+  },
+  {
+    "objectID": "proyek/dashboard-churn/index.html",
+    "href": "proyek/dashboard-churn/index.html",
+    "title": "Dashboard Early-Warning Churn Pelanggan",
+    "section": "",
+    "text": "Klien\nPenyedia internet (anonim)\n\n\nDurasi\n10 minggu\n\n\nTim\nSari · Nadia · Bima\n\n\nTools\nPower BI · BigQuery · tidymodels"
+  },
+  {
+    "objectID": "proyek/dashboard-churn/index.html#masalah",
+    "href": "proyek/dashboard-churn/index.html#masalah",
+    "title": "Dashboard Early-Warning Churn Pelanggan",
+    "section": "Masalah",
+    "text": "Masalah\nTim retensi baru tahu pelanggan berhenti setelah kontrak dibatalkan. Tidak ada daftar prioritas harian, sehingga kampanye retensi dikirim ke semua pelanggan dan biayanya membengkak."
+  },
+  {
+    "objectID": "proyek/dashboard-churn/index.html#pendekatan",
+    "href": "proyek/dashboard-churn/index.html#pendekatan",
+    "title": "Dashboard Early-Warning Churn Pelanggan",
+    "section": "Pendekatan",
+    "text": "Pendekatan\n\nFondasi data — Bima menyatukan data tagihan, tiket keluhan, dan penggunaan harian ke BigQuery dengan model dbt yang teruji.\nModel risiko — Sari melatih model gradient boosting dengan fitur perilaku 90 hari terakhir. Kami memilih model yang sedikit kurang akurat tetapi bisa dijelaskan per pelanggan.\nDashboard — Nadia mewawancarai 6 agen retensi, lalu merancang satu halaman utama: daftar 200 pelanggan berisiko tertinggi beserta alasan utamanya."
+  },
+  {
+    "objectID": "proyek/dashboard-churn/index.html#keputusan-desain-yang-penting",
+    "href": "proyek/dashboard-churn/index.html#keputusan-desain-yang-penting",
+    "title": "Dashboard Early-Warning Churn Pelanggan",
+    "section": "Keputusan desain yang penting",
+    "text": "Keputusan desain yang penting\n\nSatu angka utama, bukan 12 grafik: jumlah pelanggan berisiko tinggi hari ini.\nAlasan dalam bahasa manusia (“keluhan jaringan 3× dalam 2 minggu”) alih-alih skor SHAP.\nKelompok kontrol: 10% pelanggan berisiko sengaja tidak dihubungi, agar dampak bisa diukur jujur."
+  },
+  {
+    "objectID": "proyek/dashboard-churn/index.html#pelajaran",
+    "href": "proyek/dashboard-churn/index.html#pelajaran",
+    "title": "Dashboard Early-Warning Churn Pelanggan",
+    "section": "Pelajaran",
+    "text": "Pelajaran\nAkurasi model hanya separuh cerita. Dampak baru terlihat setelah alur kerja agen retensi ikut diubah — dashboard yang tidak masuk rutinitas harian tidak akan dipakai."
+  }
+]
